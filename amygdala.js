@@ -30,7 +30,7 @@ var Amygdala = function(options) {
   if (this._config.localStorage) {
     _.each(this._schema, function(value, key) {
       // check each schema entry for localStorage data
-      // TODO: filter out apiUrl and idAttribute 
+      // TODO: filter out apiUrl and idAttribute
       var storageCache = window.localStorage.getItem('amy-' + key);
       if (storageCache) {
         this._set(key, JSON.parse(storageCache), {'silent': true} );
@@ -94,7 +94,8 @@ Amygdala.prototype.ajax = function ajax(method, url, options) {
     if (request.status.toString().substr(0, 2) === '20') {
       deferred.resolve(request);
     } else {
-      deferred.reject(new Error('Request failed with status code ' + request.status));
+      // send the actual response instead preformated text
+      deferred.reject(new Error(request.response));
     }
   };
 
@@ -161,7 +162,7 @@ Amygdala.prototype._emitChange = function(type) {
       // TODO: compare the previous object and trigger change events
     }.bind(this), type), 150);
   }
-  
+
   this._changeEvents[type]();
 }
 
