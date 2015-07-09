@@ -5,6 +5,7 @@ if (typeof module === 'object' && module.exports) {
   var _ = require('underscore');
   var Q = require('q');
   var EventEmitter = require('wolfy87-eventemitter');
+  var BlueBird = require('bluebird');
 }
 
 var Amygdala = function(options) {
@@ -64,6 +65,7 @@ Amygdala.prototype.serialize = function serialize(obj) {
 }
 
 Amygdala.prototype.ajax = function ajax(method, url, options) {
+   return BlueBird(function(resolve, reject) {
    // Sends an Ajax request, converting the data into a querystring if the
    // method is GET.
    //
@@ -85,22 +87,21 @@ Amygdala.prototype.ajax = function ajax(method, url, options) {
   }
 
   var request = new XMLHttpRequest();
-  var deferred = Q.defer();
 
   request.open(method, url, true);
 
   request.onload = function() {
 	// status 200 OK, 201 CREATED, 20* ALL OK
 	if (request.status.toString().substr(0, 2) === '20') {
-	  deferred.resolve(request);
+	  resolve(request);
 	} else {
 	  // send the actual response instead preformated text
-	  deferred.reject(new Error(request.response));
+	  reject(new Error(request.response));
 	}
   };
 
   request.onerror = function() {
-	deferred.reject(new Error('Unabe to send request to ' + JSON.stringify(url)));
+	reject(new Error('Unabe to send request to ' + JSON.stringify(url)));
   };
 
   if (!_.isEmpty(options.contentType)) {
@@ -120,7 +121,7 @@ Amygdala.prototype.ajax = function ajax(method, url, options) {
 
   request.send(method === 'GET' ? null : options.data);
 
-  return deferred.promise;
+});
 }
 
 // ------------------------------
@@ -375,7 +376,7 @@ Amygdala.prototype.add = function(type, object, options) {
 
   // Dynamic URL is now accepted in post
   object.url ? options.url = object.url : null;
-  
+
   return this._post(options.url, object)
 	.then(_.partial(this._setAjax, type).bind(this));
 };

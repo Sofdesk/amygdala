@@ -65,8 +65,9 @@
     "gulp-uglify": "^0.2.1"
   },
   "dependencies": {
-    "underscore": "^1.8.2",
+    "bluebird": "^2.9.33",
     "q": "^1.0.1",
+    "underscore": "^1.8.2",
     "wolfy87-eventemitter": "^4.2.6"
   }
 }
