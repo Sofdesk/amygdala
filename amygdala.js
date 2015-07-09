@@ -65,7 +65,7 @@ Amygdala.prototype.serialize = function serialize(obj) {
 }
 
 Amygdala.prototype.ajax = function ajax(method, url, options) {
-   return BlueBird(function(resolve, reject) {
+   return new BlueBird(function(resolve, reject) {
    // Sends an Ajax request, converting the data into a querystring if the
    // method is GET.
    //
